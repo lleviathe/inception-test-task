@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\GenderEnum;
+use App\Enums\LangEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,6 +35,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'lang' => LangEnum::class,
+            'gender' => GenderEnum::class,
         ];
     }
 }
