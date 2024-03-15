@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->tinyInteger('gender');
             $table->string('lang');
-            $table->decimal('balance');
+            $table->decimal('balance')->default(0);
             $table->boolean('is_blocked')->default(false);
             $table->string('username')->unique();
             $table->string('email')->unique();
