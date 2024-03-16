@@ -27,7 +27,7 @@ class AuthController extends Controller
         );
         $guard = auth()->guard($this->getGuard($type));
 
-        if (!$guard->attempt($credentials)) {
+        if (! $guard->attempt($credentials)) {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
