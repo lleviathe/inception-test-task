@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Prize\AssignPrizeToRankGroupRequest;
 use App\Http\Requests\Prize\StorePrizeRequest;
 use App\Http\Requests\Prize\UpdatePrizeRequest;
-use App\Jobs\AssignPrizeToRankGroup;
 use App\Models\Prize;
-use App\Services\PrizeService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -38,7 +38,7 @@ it('can register user', function () {
             'email',
             'email_verified_at',
             'created_at',
-            'updated_at'
+            'updated_at',
         ]);
 
     $this->assertDatabaseHas('users', [

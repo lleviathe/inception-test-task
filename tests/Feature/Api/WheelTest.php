@@ -7,6 +7,32 @@ use App\Models\User;
 use App\Services\PrizeService;
 use Symfony\Component\HttpFoundation\Response;
 
+it('can get possible prizes', function () {
+    $prize1 = Prize::factory()->create();
+    $prize2 = Prize::factory()->create();
+    $rankGroup = RankGroup::factory()->create();
+
+    $rankGroup->prizes()->attach($prize1, ['number' => 700000]);
+    $rankGroup->prizes()->attach($prize2, ['number' => 300000]);
+
+    $user = User::factory()->create(['rank_group_id' => $rankGroup->id]);
+
+    $response = $this->actingAs($user)->getJson('/api/wheel/prizes');
+
+    expect($response->status())->toBe(Response::HTTP_OK)
+        ->and($response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'name',
+                    'description',
+                    'created_at',
+                    'updated_at',
+                ],
+            ],
+        ]));
+})->group('api.wheel');
+
 it('can spin the wheel & win prize', function () {
     $admin = Admin::factory()->create();
     $prize1 = Prize::factory()->create();
@@ -24,7 +50,7 @@ it('can spin the wheel & win prize', function () {
         'number' => 300000,
     ])->json();
 
-    $response = $this->actingAs($user)->postJson('/api/spin-wheel', [
+    $response = $this->actingAs($user)->postJson('/api/wheel/spin', [
         'user_id' => $user->id,
     ]);
 
@@ -34,31 +60,31 @@ it('can spin the wheel & win prize', function () {
             'name',
             'description',
             'created_at',
-            'updated_at'
+            'updated_at',
         ]));
-})->group('api.spin-wheel');
+})->group('api.wheel');
 
 it('can not spin the wheel if user does not have rank group', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->postJson('/api/spin-wheel', [
+    $response = $this->actingAs($user)->postJson('/api/wheel/spin', [
         'user_id' => $user->id,
     ]);
 
-    $response->assertStatus(Response::HTTP_UNAUTHORIZED);
-})->group('api.spin-wheel');
+    expect($response->status())->toBe(Response::HTTP_UNAUTHORIZED);
+})->group('api.wheel');
 
 it('can not spin the wheel if there are no prizes assigned to rank group', function () {
     $admin = Admin::factory()->create();
     $rankGroup = RankGroup::factory()->create();
     $user = User::factory()->create(['rank_group_id' => $rankGroup->id]);
 
-    $response = $this->actingAs($user)->postJson('/api/spin-wheel', [
+    $response = $this->actingAs($user)->postJson('/api/wheel/spin', [
         'user_id' => $user->id,
     ]);
 
-    $response->assertStatus(Response::HTTP_NOT_FOUND);
-})->group('api.spin-wheel');
+    expect($response->status())->toBe(Response::HTTP_NOT_FOUND);
+})->group('api.wheel');
 
 it('can correctly calculate winning odds', function () {
     $prize25 = Prize::factory()->create();
@@ -71,4 +97,4 @@ it('can correctly calculate winning odds', function () {
 
     expect(PrizeService::calculateWinningOdds($prize25, $rankGroup))->toBe(25.0)
         ->and(PrizeService::calculateWinningOdds($prize75, $rankGroup))->toBe(75.0);
-})->group('api.spin-wheel');
+})->group('api.wheel');

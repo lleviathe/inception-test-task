@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
             );
         });
 
-
         // Create prizes
         $rankGroups->each(function ($rankGroup) {
             $rankGroup->prizes()->saveMany(

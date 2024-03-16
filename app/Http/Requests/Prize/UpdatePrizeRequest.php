@@ -16,7 +16,7 @@ class UpdatePrizeRequest extends FormRequest
         return [
             'name' => 'sometimes|string',
             'description' => 'sometimes|string',
-            'amount' => 'sometimes|numeric'
+            'amount' => 'sometimes|numeric',
         ];
     }
 }

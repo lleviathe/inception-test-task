@@ -41,9 +41,8 @@ it('can assign prize to rank group', function () {
         'number' => 1000000,
     ]);
 
-    sleep(1);
+    expect($response->status())->toBe(Response::HTTP_OK);
 
-    $response->assertStatus(Response::HTTP_OK);
     $this->assertDatabaseHas('prize_rank_group', [
         'prize_id' => $prize->id,
         'rank_group_id' => $rankGroup->id,
@@ -58,10 +57,12 @@ it('can not assign prize that already exists in rank group', function () {
 
     $rankGroup->prizes()->attach($prize, ['number' => 1000000]);
 
-    $this->actingAs($admin, 'admin')->postJson("/api/rank-groups/$rankGroup->id/prizes", [
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/rank-groups/$rankGroup->id/prizes", [
         'prize_id' => $prize->id,
         'number' => 1000000,
     ]);
+
+    expect($response->status())->toBe(Response::HTTP_BAD_REQUEST);
 
     $this->assertDatabaseCount('prize_rank_group', 1);
 })->group('api.assign-prize', 'api.rank-groups');

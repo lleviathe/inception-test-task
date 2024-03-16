@@ -7,11 +7,13 @@ use App\Http\Requests\RankGroup\ChooseRanksRequest;
 use App\Http\Requests\RankGroup\StoreRankGroupRequest;
 use App\Http\Requests\RankGroup\UpdateRankGroupRequest;
 use App\Http\Resources\RankGroupResource;
-use App\Jobs\AssignPrizeToRankGroup;
+use App\Models\Prize;
 use App\Models\Rank;
 use App\Models\RankGroup;
+use App\Services\PrizeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class RankGroupController extends Controller
@@ -54,12 +56,12 @@ class RankGroupController extends Controller
             $ranksToAdd = array_diff($input['rank_ids'], $currentRankIds);
             $ranksToRemove = array_diff($currentRankIds, $input['rank_ids']);
 
-            if (!empty($ranksToAdd)) {
+            if (! empty($ranksToAdd)) {
                 Rank::whereIn('id', $ranksToAdd)
                     ->update(['rank_group_id' => $rankGroup->id]);
             }
 
-            if (!empty($ranksToRemove)) {
+            if (! empty($ranksToRemove)) {
                 Rank::whereIn('id', $ranksToRemove)
                     ->update(['rank_group_id' => null]);
             }
@@ -71,10 +73,24 @@ class RankGroupController extends Controller
     public function assignPrize(AssignPrizeToRankGroupRequest $request, RankGroup $rankGroup): JsonResponse
     {
         $input = $request->validated();
+        $prize_id = $input['prize_id'];
+        $number = $input['number'];
 
-        AssignPrizeToRankGroup::dispatch($input['prize_id'], $input['number'], $rankGroup);
+        try {
+            $prize = Prize::findOrFail($prize_id);
 
-        return response()->json(status: Response::HTTP_OK);
+            if ($prize->rankGroups->pluck('id')->contains($rankGroup->id)) {
+                return response()->json(['message' => 'Prize already assigned to this rank group'], Response::HTTP_BAD_REQUEST);
+            }
+
+            app(PrizeService::class)->assignPrizeToRankGroup($prize, $rankGroup, $number);
+
+            return response()->json(status: Response::HTTP_OK);
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+
+            return response()->json(status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function destroy(RankGroup $rankGroup): JsonResponse
