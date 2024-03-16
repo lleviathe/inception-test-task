@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\WinningSnapshotData;
 use App\Exceptions\NoPrizesAssignedToRankGroupException;
 use App\Exceptions\UserDoesNotHaveRankGroupException;
 use App\Http\Resources\PrizeResource;
+use App\Models\Prize;
+use App\Models\User;
+use App\Models\Winning;
 use App\Services\PrizeService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +27,7 @@ class WheelController extends Controller
         try {
             $prize = $this->wheelService->getPrize($user);
 
-            return response()->json($prize);
+            return PrizeResource::make($prize)->response();
         } catch (NoPrizesAssignedToRankGroupException $e) {
             return response()->json($e->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (UserDoesNotHaveRankGroupException $e) {

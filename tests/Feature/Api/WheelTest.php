@@ -1,5 +1,6 @@
 <?php
 
+use App\Data\WinningSnapshotData;
 use App\Models\Admin;
 use App\Models\Prize;
 use App\Models\RankGroup;
@@ -33,7 +34,7 @@ it('can get possible prizes', function () {
         ]));
 })->group('api.wheel');
 
-it('can spin the wheel & win prize', function () {
+it('can spin the wheel, win prize and log winning', function () {
     $admin = Admin::factory()->create();
     $prize1 = Prize::factory()->create();
     $prize2 = Prize::factory()->create();
@@ -56,12 +57,28 @@ it('can spin the wheel & win prize', function () {
 
     expect($response->status())->toBe(Response::HTTP_OK)
         ->and($response->assertJsonStructure([
-            'id',
-            'name',
-            'description',
-            'created_at',
-            'updated_at',
+            'data' => [
+                'id',
+                'name',
+                'description',
+                'type',
+                'amount',
+                'created_at',
+                'updated_at',
+            ],
         ]));
+
+    $this->assertDatabaseHas('winnings', [
+        'user_id' => $user->id,
+        'prize_id' => $response['data']['id'],
+        'snapshot_data' => WinningSnapshotData::from([
+            'prize_name' => $response['data']['name'],
+            'prize_description' => $response['data']['description'],
+            'prize_type' => $response['data']['type'],
+            'prize_amount' => $response['data']['amount'],
+            'winning_odds' => PrizeService::calculateWinningOdds(Prize::find($response['data']['id']), $rankGroup),
+        ])->toJson()
+    ]);
 })->group('api.wheel');
 
 it('can not spin the wheel if user does not have rank group', function () {

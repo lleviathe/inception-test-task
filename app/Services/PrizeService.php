@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Data\WinningSnapshotData;
 use App\Exceptions\NoPrizesAssignedToRankGroupException;
 use App\Exceptions\UserDoesNotHaveRankGroupException;
 use App\Jobs\RecalculateWinningOdds;
@@ -9,6 +10,7 @@ use App\Models\Prize;
 use App\Models\PrizeRankGroup;
 use App\Models\RankGroup;
 use App\Models\User;
+use App\Models\Winning;
 
 class PrizeService
 {
@@ -22,7 +24,7 @@ class PrizeService
     /**
      * Get a prize for user that is spinning the wheel
      *
-     * @param  User  $user  The user who is spinning the wheel
+     * @param User $user The user who is spinning the wheel
      * @return Prize The prize that the user won
      *
      * @throws NoPrizesAssignedToRankGroupException
@@ -43,12 +45,33 @@ class PrizeService
             }
         }
 
-        return $probabilityArray[array_rand($probabilityArray)];
+        $wonPrize = $probabilityArray[array_rand($probabilityArray)];
+
+        $this->createWinning($user, $wonPrize);
+
+        return $wonPrize;
+    }
+
+    private function createWinning(User $user, Prize $prize): void
+    {
+        $rankGroup = $user->rankGroup;
+
+        Winning::create([
+            'user_id' => $user->id,
+            'prize_id' => $prize->id,
+            'snapshot_data' => WinningSnapshotData::from([
+                'prize_name' => $prize->name,
+                'prize_description' => $prize->description,
+                'prize_type' => $prize->type,
+                'prize_amount' => $prize->amount,
+                'winning_odds' => cache()->get("winning_odds:$rankGroup->id:$prize->id", 0),
+            ]),
+        ]);
     }
 
     public static function calculateWinningOdds(Prize $prize, RankGroup $rankGroup): float
     {
-        $totalPrizes = $rankGroup->prizes->sum(fn ($prize) => $prize->pivot?->number);
+        $totalPrizes = $rankGroup->prizes->sum(fn($prize) => $prize->pivot?->number);
         $pivot = PrizeRankGroup::query()
             ->where('prize_id', $prize->id)
             ->where('rank_group_id', $rankGroup->id)

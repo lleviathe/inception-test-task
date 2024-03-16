@@ -20,6 +20,11 @@ class RankGroup extends Model
         return $this->hasMany(Rank::class);
     }
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
     public function prizes(): BelongsToMany
     {
         return $this->belongsToMany(Prize::class)
