@@ -19,7 +19,6 @@ class PrizeFactory extends Factory
             'description' => $this->faker->sentence,
             'type' => $this->faker->randomElement(PrizeTypeEnum::values()),
             'amount' => $this->faker->randomFloat(2, 1, 1000),
-            'quantity' => $this->faker->numberBetween(1, 100),
         ];
     }
 

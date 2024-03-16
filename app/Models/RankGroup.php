@@ -22,6 +22,9 @@ class RankGroup extends Model
 
     public function prizes(): BelongsToMany
     {
-        return $this->belongsToMany(Prize::class)->withTimestamps();
+        return $this->belongsToMany(Prize::class)
+            ->using(PrizeRankGroup::class)
+            ->withPivot('number')
+            ->withTimestamps();
     }
 }

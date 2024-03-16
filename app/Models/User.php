@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\GenderEnum;
 use App\Enums\LangEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -38,5 +39,10 @@ class User extends Authenticatable
             'lang' => LangEnum::class,
             'gender' => GenderEnum::class,
         ];
+    }
+
+    public function rankGroup(): BelongsTo
+    {
+        return $this->belongsTo(RankGroup::class);
     }
 }

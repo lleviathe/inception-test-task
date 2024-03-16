@@ -16,7 +16,6 @@ class Prize extends Model
         'description',
         'type',
         'amount',
-        'quantity',
     ];
 
     protected function casts(): array
@@ -28,6 +27,8 @@ class Prize extends Model
 
     public function rankGroups(): BelongsToMany
     {
-        return $this->belongsToMany(RankGroup::class)->withTimestamps();
+        return $this->belongsToMany(RankGroup::class)
+            ->using(PrizeRankGroup::class)
+            ->withTimestamps();
     }
 }
