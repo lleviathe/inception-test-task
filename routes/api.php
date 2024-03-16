@@ -14,9 +14,6 @@ Route::middleware(['guest'])->group(function () {
 
 /** User Routes */
 Route::middleware(['auth:sanctum', 'type.user'])->group(function () {
-    Route::get('/test', function () {
-        return 'User';
-    });
     Route::post('/logout', [AuthController::class, 'logout']);;
     Route::post('/spin-wheel', SpinWheelAction::class);
 });
