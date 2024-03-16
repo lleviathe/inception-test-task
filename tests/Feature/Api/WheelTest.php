@@ -77,7 +77,7 @@ it('can spin the wheel, win prize and log winning', function () {
             'prize_type' => $response['data']['type'],
             'prize_amount' => $response['data']['amount'],
             'winning_odds' => PrizeService::calculateWinningOdds(Prize::find($response['data']['id']), $rankGroup),
-        ])->toJson()
+        ])->toJson(),
     ]);
 })->group('api.wheel');
 

@@ -24,7 +24,7 @@ class PrizeService
     /**
      * Get a prize for user that is spinning the wheel
      *
-     * @param User $user The user who is spinning the wheel
+     * @param  User  $user  The user who is spinning the wheel
      * @return Prize The prize that the user won
      *
      * @throws NoPrizesAssignedToRankGroupException
@@ -71,7 +71,7 @@ class PrizeService
 
     public static function calculateWinningOdds(Prize $prize, RankGroup $rankGroup): float
     {
-        $totalPrizes = $rankGroup->prizes->sum(fn($prize) => $prize->pivot?->number);
+        $totalPrizes = $rankGroup->prizes->sum(fn ($prize) => $prize->pivot?->number);
         $pivot = PrizeRankGroup::query()
             ->where('prize_id', $prize->id)
             ->where('rank_group_id', $rankGroup->id)

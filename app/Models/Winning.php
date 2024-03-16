@@ -14,7 +14,7 @@ class Winning extends Model
     protected $fillable = [
         'user_id',
         'prize_id',
-        'snapshot_data'
+        'snapshot_data',
     ];
 
     protected function casts(): array
