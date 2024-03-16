@@ -9,7 +9,7 @@ class AssignPrizeToRankGroupRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth('admin')->check();
+        return auth()->check();
     }
 
     public function rules(): array
@@ -23,7 +23,6 @@ class AssignPrizeToRankGroupRequest extends FormRequest
                         ->where('prize_id', $this->prize_id)
                         ->where('rank_group_id', $this->rank_group_id);
                 })],
-            'rank_group_id' => 'required|exists:rank_groups,id',
             'number' => 'required|integer|min:1',
         ];
     }

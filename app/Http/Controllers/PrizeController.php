@@ -13,12 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PrizeController extends Controller
 {
-    public function __construct(
-        private readonly PrizeService $service
-    )
-    {
-    }
-
     public function index(): JsonResponse
     {
         return response()->json(Prize::all());
@@ -41,19 +35,6 @@ class PrizeController extends Controller
         $prize->update($request->validated());
 
         return response()->json($prize);
-    }
-
-    public function assignToRankGroup(AssignPrizeToRankGroupRequest $request): JsonResponse
-    {
-        $input = $request->validated();
-
-        AssignPrizeToRankGroup::dispatch(
-            $input['prize_id'],
-            $input['rank_group_id'],
-            $input['number']
-        );
-
-        return response()->json(status: Response::HTTP_OK);
     }
 
     public function destroy(Prize $prize): JsonResponse

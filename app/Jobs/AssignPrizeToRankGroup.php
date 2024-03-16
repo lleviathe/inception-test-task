@@ -16,22 +16,21 @@ class AssignPrizeToRankGroup implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private readonly int $prizeId,
-        private readonly int $rankGroupId,
-        private readonly int $number,
+        private readonly int       $prize_id,
+        private readonly int       $number,
+        private readonly RankGroup $rankGroup,
     )
     {
     }
 
     public function handle(): void
     {
-        $prize = Prize::findOrFail($this->prizeId);
-        $rankGroup = RankGroup::findOrFail($this->rankGroupId);
+        $prize = Prize::findOrFail($this->prize_id);
 
-        if ($prize->rankGroups->contains($rankGroup)) {
+        if ($prize->rankGroups->pluck('id')->contains($this->rankGroup->id)) {
             return;
         }
 
-        app(PrizeService::class)->assignPrizeToRankGroup($prize, $rankGroup, $this->number);
+        app(PrizeService::class)->assignPrizeToRankGroup($prize, $this->rankGroup, $this->number);
     }
 }
