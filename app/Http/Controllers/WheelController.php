@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Data\WinningSnapshotData;
 use App\Exceptions\NoPrizesAssignedToRankGroupException;
 use App\Exceptions\UserDoesNotHaveRankGroupException;
 use App\Http\Resources\PrizeResource;
-use App\Models\Prize;
-use App\Models\User;
-use App\Models\Winning;
 use App\Services\PrizeService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

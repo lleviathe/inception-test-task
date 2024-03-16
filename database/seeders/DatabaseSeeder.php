@@ -2,11 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Data\WinningSnapshotData;
-use App\Models\Prize;
-use App\Models\Rank;
-use App\Models\RankGroup;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

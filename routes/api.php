@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum', 'type.user'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::controller(WheelController::class)->prefix('wheel')->group(function () {
-        Route::post('spin', 'spin');
+        Route::post('spin', 'spin')->middleware('throttle:wheel-spin');
         Route::get('prizes', 'getPossiblePrizes');
     });
 });

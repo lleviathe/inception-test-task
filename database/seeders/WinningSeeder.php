@@ -23,7 +23,7 @@ class WinningSeeder extends Seeder
                         'prize_description' => $prize->description,
                         'prize_type' => $prize->type,
                         'prize_amount' => $prize->amount,
-                        'winning_odds' => fake()->randomNumber(2, true)
+                        'winning_odds' => fake()->randomNumber(2, true),
                     ]),
                 ]);
             });
