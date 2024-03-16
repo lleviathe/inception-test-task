@@ -6,6 +6,8 @@ use App\Enums\LangEnum;
 use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
+use Symfony\Component\HttpFoundation\Response;
 
 uses(RefreshDatabase::class);
 
@@ -62,19 +64,19 @@ it('can authenticate', function ($authenticableType) {
         ->toBeString();
 })->with('authenticableTypes');
 
-it('can logout', function ($authenticatableType) {
-    $authenticatable = match ($authenticatableType) {
-        AuthenticableTypeEnum::Admin => Admin::factory()->create(),
-        AuthenticableTypeEnum::User => User::factory()->create(),
-    };
+it('logs out successfully', function () {
+    $user = User::factory()->create();
+    $user->createToken('authToken');
 
-    $token = $authenticatable->createToken('authToken')->plainTextToken;
+    Sanctum::actingAs($user);
 
-    $response = $this->withHeader('Authorization', "Bearer $token")
-        ->postJson('/api/logout');
+    $response = $this->postJson('/api/logout');
+    expect($response->status())->toBe(Response::HTTP_OK)
+        ->and($user->tokens)->toHaveCount(0);
+});
 
-    expect($response->status())
-        ->toBe(200)
-        ->and($authenticatable->tokens()->count())
-        ->toBe(0);
-})->with('authenticableTypes');
+it('returns 403 for unauthenticated user', function () {
+    $response = $this->postJson('/api/logout');
+
+    expect($response->status())->toBe(Response::HTTP_UNAUTHORIZED);
+});

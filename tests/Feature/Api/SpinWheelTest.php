@@ -14,19 +14,17 @@ it('can spin the wheel & win prize', function () {
     $rankGroup = RankGroup::factory()->create();
     $user = User::factory()->create(['rank_group_id' => $rankGroup->id]);
 
-    $this->actingAs($admin, 'admin')->postJson('/api/prizes/assign', [
+    $this->actingAs($admin)->postJson("/api/rank-groups/$rankGroup->id/prizes", [
         'prize_id' => $prize1->id,
-        'rank_group_id' => $rankGroup->id,
         'number' => 700000,
     ])->json();
 
-    $this->actingAs($admin, 'admin')->postJson('/api/prizes/assign', [
+    $this->actingAs($admin)->postJson("/api/rank-groups/$rankGroup->id/prizes", [
         'prize_id' => $prize2->id,
-        'rank_group_id' => $rankGroup->id,
         'number' => 300000,
     ])->json();
 
-    $response = $this->actingAs($user, 'web')->postJson('/api/spin-wheel', [
+    $response = $this->actingAs($user)->postJson('/api/spin-wheel', [
         'user_id' => $user->id,
     ]);
 
@@ -43,7 +41,7 @@ it('can spin the wheel & win prize', function () {
 it('can not spin the wheel if user does not have rank group', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user, 'web')->postJson('/api/spin-wheel', [
+    $response = $this->actingAs($user)->postJson('/api/spin-wheel', [
         'user_id' => $user->id,
     ]);
 
@@ -55,7 +53,7 @@ it('can not spin the wheel if there are no prizes assigned to rank group', funct
     $rankGroup = RankGroup::factory()->create();
     $user = User::factory()->create(['rank_group_id' => $rankGroup->id]);
 
-    $response = $this->actingAs($user, 'web')->postJson('/api/spin-wheel', [
+    $response = $this->actingAs($user)->postJson('/api/spin-wheel', [
         'user_id' => $user->id,
     ]);
 

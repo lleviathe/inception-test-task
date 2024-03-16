@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Prize;
+namespace App\Http\Requests\RankGroup;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePrizeRequest extends FormRequest
+class StoreRankGroupRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,9 +14,7 @@ class UpdatePrizeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string',
-            'description' => 'sometimes|string',
-            'amount' => 'sometimes|numeric'
+            'name' => 'required|string|max:255',
         ];
     }
 }

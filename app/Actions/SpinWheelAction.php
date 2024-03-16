@@ -44,7 +44,7 @@ class SpinWheelAction
     public function asController(Request $request): JsonResponse
     {
         try {
-            $prize = $this->handle(auth('web')->user());
+            $prize = $this->handle(auth()->user());
 
             return response()->json($prize);
         } catch (UserDoesNotHaveRankGroupException $e) {

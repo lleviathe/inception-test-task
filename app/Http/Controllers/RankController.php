@@ -2,48 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Rank\StoreRankRequest;
+use App\Http\Requests\Rank\UpdateRankRequest;
+use App\Http\Resources\RankResource;
 use App\Models\Rank;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class RankController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $ranks = Rank::with('rankGroup');
+
+        return RankResource::collection($ranks)->response();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreRankRequest $request): JsonResponse
     {
-        //
+        $rank = Rank::create($request->validated());
+
+        return (new RankResource($rank))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Rank $rank)
+    public function show(Rank $rank): JsonResponse
     {
-        //
+        return RankResource::make($rank)->response();
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Rank $rank)
+    public function update(UpdateRankRequest $request, Rank $rank): JsonResponse
     {
-        //
+        $rank->update($request->validated());
+
+        return RankResource::make($rank)->response();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Rank $rank)
+    public function destroy(Rank $rank): JsonResponse
     {
-        //
+        $rank->delete();
+
+        return response()->json(status: Response::HTTP_NO_CONTENT);
     }
 }
