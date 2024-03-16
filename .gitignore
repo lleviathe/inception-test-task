@@ -19,3 +19,6 @@ yarn-error.log
 /.vscode
 /public/docs
 /.scribe
+/public/vendor/scribe/
+/storage/api-docs
+/**/.DS_Store
