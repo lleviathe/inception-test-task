@@ -52,23 +52,6 @@ class PrizeService
         return $wonPrize;
     }
 
-    private function createWinning(User $user, Prize $prize): void
-    {
-        $rankGroup = $user->rankGroup;
-
-        Winning::create([
-            'user_id' => $user->id,
-            'prize_id' => $prize->id,
-            'snapshot_data' => WinningSnapshotData::from([
-                'prize_name' => $prize->name,
-                'prize_description' => $prize->description,
-                'prize_type' => $prize->type,
-                'prize_amount' => $prize->amount,
-                'winning_odds' => cache()->get("winning_odds:$rankGroup->id:$prize->id", 0),
-            ]),
-        ]);
-    }
-
     public static function calculateWinningOdds(Prize $prize, RankGroup $rankGroup): float
     {
         $totalPrizes = $rankGroup->prizes->sum(fn ($prize) => $prize->pivot?->number);
@@ -111,5 +94,22 @@ class PrizeService
                 return PrizeService::calculateWinningOdds($prize, $rankGroup);
             }
         );
+    }
+
+    private function createWinning(User $user, Prize $prize): void
+    {
+        $rankGroup = $user->rankGroup;
+
+        Winning::create([
+            'user_id' => $user->id,
+            'prize_id' => $prize->id,
+            'snapshot_data' => WinningSnapshotData::from([
+                'prize_name' => $prize->name,
+                'prize_description' => $prize->description,
+                'prize_type' => $prize->type,
+                'prize_amount' => $prize->amount,
+                'winning_odds' => cache()->get("winning_odds:$rankGroup->id:$prize->id", 0),
+            ]),
+        ]);
     }
 }

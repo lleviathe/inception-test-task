@@ -26,6 +26,7 @@
 - [ ] API versioning
 - [ ] Detailed API documentation with more examples and explanations
 - [ ] Overall code coverage: over 90% (it's not neccessary to cover all the code with tests, but it's nice to have)
+- [ ] Use Laravel's built-in localization features for error messages and responses
 
 ## Start the project:
 

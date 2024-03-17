@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         $token = $guard->user()?->createToken('authToken')->plainTextToken;
 
-        return response()->json(['access_token' => $token], Response::HTTP_OK);
+        return response()->json(['access_token' => $token]);
     }
 
     public function logout(): JsonResponse
@@ -41,7 +41,7 @@ class AuthController extends Controller
         $authenticable = auth()->user();
         $authenticable?->tokens()->delete();
 
-        return response()->json(['message' => 'Logged out'], 200);
+        return response()->json(['message' => 'Logged out']);
     }
 
     private function getGuard(AuthenticableTypeEnum $type): string
