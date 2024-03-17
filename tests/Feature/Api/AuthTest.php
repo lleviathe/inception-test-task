@@ -44,7 +44,7 @@ it('can register user', function () {
     $this->assertDatabaseHas('users', [
         'email' => $response->json('user.email'),
     ]);
-});
+})->group('api.auth');
 
 it('can authenticate', function ($authenticableType) {
     $authenticatable = match ($authenticableType) {
@@ -62,7 +62,7 @@ it('can authenticate', function ($authenticableType) {
         ->toBe(200)
         ->and($response->json('access_token'))
         ->toBeString();
-})->with('authenticableTypes');
+})->with('authenticableTypes')->group('api.auth');
 
 it('logs out successfully', function () {
     $user = User::factory()->create();
@@ -73,10 +73,10 @@ it('logs out successfully', function () {
     $response = $this->postJson('/api/logout');
     expect($response->status())->toBe(Response::HTTP_OK)
         ->and($user->tokens)->toHaveCount(0);
-});
+})->group('api.auth');
 
 it('returns 403 for unauthenticated user', function () {
     $response = $this->postJson('/api/logout');
 
     expect($response->status())->toBe(Response::HTTP_UNAUTHORIZED);
-});
+})->group('api.auth');
